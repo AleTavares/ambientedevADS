@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  postgres:
+    build:
+      context: ./docker/postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin_password
+      POSTGRES_DB: satisfaction_survey
+    networks:
+      - survey-network
+
+  mongodb:
+    build:
+      context: ./docker/mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin_password
+    networks:
+      - survey-network
+
+  nodejs:
+    build:
+      context: ./docker/nodejs
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+      - mongodb
+    networks:
+      - survey-network
+
+networks:
+  survey-network:
+    driver: bridge
